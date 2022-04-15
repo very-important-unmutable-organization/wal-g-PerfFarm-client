@@ -23,10 +23,18 @@ ENTRYPOINT ["/wal-g", "--version"]
 
 ###################################################
 
-FROM postgres:12-buster
+FROM python:3.9.12-slim
 
 RUN apt update && apt install -y libbrotli-dev
 
 COPY --from=builder /wal-g /usr/local/bin/wal-g
 
-ENTRYPOINT ["wal-g", "--version"]
+WORKDIR /opt
+
+COPY src/requirements.txt ./requirements.txt
+
+RUN pip3 install -r requirements.txt
+
+COPY src .
+
+ENTRYPOINT ["python3", "/opt/main.py"]
