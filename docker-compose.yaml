@@ -5,6 +5,17 @@ services:
     build:
       context: .
     container_name: farm-client
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  postgres:
+    image: postgres:12.10
+    container_name: postgres
+    ports:
+      - "5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
   minio:
     image: minio/minio:RELEASE.2022-03-17T06-34-49Z
     container_name: minio
@@ -24,3 +35,4 @@ services:
 
 volumes:
   minio:
+  pgdata:
