@@ -1,27 +1,33 @@
-preparers:
-  gen_wals:
-    class: WalGenerator
+wrappers:
+  gen_random_wal_file:
+    class: RandomWalGenerator
 
-  gen_100MB_wals:
-    class: WalGenerator
+  push_real_pg_wal:
+    class: PGWalPusher
+
+  gen_pg_data_large:
+    class: PGDataGenerator
     kwargs:
-      size: 100MB
+      tables: 3
+      table_size: 1000
+
+  gen_pg_data_small:
+    class: PGDataGenerator
+    kwargs:
+      tables: 1
+      table_size: 10
 
 benchmarks:
-  - name: wal_fetch_100_100MB
-    preparers:
-      - preparer: gen_100MB_wals
-    class: WalFetchNTimes
+  - bench_name: RandomWalFetch100Times
+    class: RunWalFetchNTimes
     kwargs:
       times: 100
-      aggregate: avg
-      
-  - name: backup_fetch_100_10MB
-    preparers:
-      - preparer: gen_wals
-        kwargs:
-          size: 10MB
-    class: BackupFetchNTimes
+    wrappers:
+      - wrapper: gen_random_wal_file
+
+  - bench_name: RealWalFetch100Times
+    class: RunWalFetchNTimes
     kwargs:
       times: 100
-      aggregate: avg
+    wrappers:
+      - wrapper: push_real_pg_wal
