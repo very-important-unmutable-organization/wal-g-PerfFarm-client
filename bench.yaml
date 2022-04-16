@@ -1,0 +1,27 @@
+preparers:
+  gen_wals:
+    class: WalGenerator
+
+  gen_100MB_wals:
+    class: WalGenerator
+    kwargs:
+      size: 100MB
+
+benchmarks:
+  - name: wal_fetch_100_100MB
+    preparers:
+      - preparer: gen_100MB_wals
+    class: WalFetchNTimes
+    kwargs:
+      times: 100
+      aggregate: avg
+      
+  - name: backup_fetch_100_10MB
+    preparers:
+      - preparer: gen_wals
+        kwargs:
+          size: 10MB
+    class: BackupFetchNTimes
+    kwargs:
+      times: 100
+      aggregate: avg
