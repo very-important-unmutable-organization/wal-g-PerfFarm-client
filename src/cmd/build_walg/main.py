@@ -1,43 +1,17 @@
-import os
-import subprocess
-import sys
 import argparse
-from tempfile import TemporaryDirectory
 import logging
+import os
+from tempfile import TemporaryDirectory
+
+from utils.commands import run_command, run_command_out_to_shell
 
 WALG_REPO_URL = 'https://github.com/wal-g/wal-g'
-
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
     level=logging.INFO,
     datefmt='%Y/%m/%d %H:%M:%S',
 )
-
-
-def run_command(command, shell=False):
-    if not shell:
-        stdout = subprocess.PIPE
-        stderr = subprocess.PIPE
-    else:
-        stdout = sys.stdout
-        stderr = sys.stderr
-
-    p = subprocess.Popen(
-        [command],
-        shell=True,
-        stdout=stdout,
-        stderr=stderr,
-    )
-
-    ret_code = p.wait()
-    if ret_code != 0:
-        raise RuntimeError("process finished with non-zero code")
-
-    if not shell:
-        return p.stdout.read().decode(), p.stderr.read().decode()
-
-    return None, None
 
 
 def build_walg(commit):
@@ -59,8 +33,8 @@ def build_walg(commit):
 
         os.chdir(tempdir)
 
-        run_command('go mod vendor', shell=True)
-        run_command('make pg_install', shell=True)
+        run_command_out_to_shell('go mod vendor')
+        run_command_out_to_shell('make pg_install')
 
         logging.info('build of walg finished!')
 

@@ -1,0 +1,2 @@
+class WalgPerformanceFarmBase(Exception):
+    pass

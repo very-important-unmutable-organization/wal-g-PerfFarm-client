@@ -1,5 +1,5 @@
 wrappers:
-  gen_random_wal_file:
+  push_random_wal:
     class: RandomWalGenerator
 
   push_real_pg_wal:
@@ -23,7 +23,7 @@ benchmarks:
     kwargs:
       times: 100
     wrappers:
-      - wrapper: gen_random_wal_file
+      - wrapper: push_random_wal
 
   - bench_name: RealWalFetch100Times
     class: RunWalFetchNTimes

@@ -1,33 +1,40 @@
 FROM golang:1.18-buster as builder
 
-RUN apt update && \
-    apt install -y \
-        curl \
+RUN apt-get update && \
+    apt-get install -y \
         git \
+        curl \
         make \
         liblzo2-dev \
         libbrotli-dev \
         python3 \
-        python3-pip
+        python3-pip && \
+        mkdir -p /opt/cmd/build_walg /opt/utils/ && \
+        touch /opt/cmd/__init__.py /opt/utils/__init__.py
 
 WORKDIR /opt
 
-COPY build_walg .
+COPY src/cmd/build_walg /opt/cmd/build_walg
+COPY src/utils/commands.py /opt/utils/commands.py
 
 ARG WALG_COMMIT
 ENV PYTHONUNBUFFERED=1
 
-RUN python3 /opt/main.py --commit $WALG_COMMIT
-
-ENTRYPOINT ["/wal-g", "--version"]
+RUN python3 -m cmd.build_walg.main --commit $WALG_COMMIT
 
 ###################################################
 
 FROM python:3.9.12-slim
 
-RUN apt update && apt install -y libbrotli-dev
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+    libbrotli-dev \
+    postgresql \
+    postgresql-contrib
 
 COPY --from=builder /wal-g /usr/local/bin/wal-g
+
+USER postgres
 
 WORKDIR /opt
 
@@ -35,6 +42,9 @@ COPY src/requirements.txt ./requirements.txt
 
 RUN pip3 install -r requirements.txt
 
-COPY src .
+COPY src bench.yaml ./
 
-ENTRYPOINT ["python3", "/opt/main.py"]
+ENV PYTHONUNBUFFERED=1
+ENV PGDATA=/var/lib/postgresql/data
+
+ENTRYPOINT ["python3", "-m", "cmd.client.main"]
