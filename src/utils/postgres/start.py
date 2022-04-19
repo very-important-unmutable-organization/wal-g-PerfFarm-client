@@ -47,11 +47,11 @@ def postgres_running():
 
 
 def configure_postgres():
-    with open(os.path.join(POSTGRES_PGDATA, POSTGRES_CONFIG_NAME), 'w+') as f:
+    with open(os.path.join(POSTGRES_PGDATA, POSTGRES_CONFIG_NAME), 'a') as f:
         f.writelines([
-            f'archive_mode = on',
-            f'archive_command = /usr/bin/timeout 600 /usr/bin/wal-g --config={WALG_CONFIG_PATH} wal-push %p',
-            f'archive_timeout = 600'
+            f'archive_mode = on\n',
+            f"archive_command = '/usr/bin/timeout 600 /usr/bin/wal-g --config={WALG_CONFIG_PATH} wal-push %p'\n",
+            f'archive_timeout = 600\n',
         ])
 
 
@@ -71,6 +71,7 @@ def start_postgres():
 
     logging.info('configuring postgres for pushing of wal archives')
     configure_postgres()
+    logging.info('configuring succeed!')
 
     # initdb succeed
     ret_code = run_command_out_to_shell(f'{POSTGRES_BIN}/pg_ctl start')

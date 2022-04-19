@@ -20,7 +20,7 @@ class RandomWalGenerator(BaseWrapper):
 
     def prepare(self, bench: BaseBenchmark):
         if minio_object_exist(self.bucket, self.name):
-            logging.info(f'{self.bucket}/{self.name} already exists in minio! delete.')
+            logging.info(f'{self.bucket}/{self.name} already exists in minio!')
             return
 
         logging.info('generating random bytes for walg')

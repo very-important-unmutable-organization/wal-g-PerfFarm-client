@@ -6,5 +6,8 @@ POSTGRES_PGDATA = os.environ['PGDATA']
 POSTGRES_PASSWORD = ''
 
 MINIO_POSTGRES_BACKUP_BUCKET = 'pgbackup'
+MINIO_ACCESS_KEY = 'admin'
+MINIO_SECRET_KEY = 'admin_password'
+MINIO_ENDPOINT = 'minio:9000'
 
 WALG_CONFIG_PATH = '/opt/.walg.json'

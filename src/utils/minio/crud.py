@@ -2,14 +2,15 @@ import logging
 
 from minio import Minio
 
+from utils.const import MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_ENDPOINT
 from utils.exceptions.minio import MinioBucketDoesntExist
 
 
 def new_client():
     return Minio(
-        'minio:9000',
-        access_key='admin',
-        secret_key='admin_password',
+        MINIO_ENDPOINT,
+        access_key=MINIO_ACCESS_KEY,
+        secret_key=MINIO_SECRET_KEY,
         secure=False,
     )
 

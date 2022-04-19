@@ -30,7 +30,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
     libbrotli-dev \
     postgresql \
-    postgresql-contrib
+    postgresql-contrib && \
+    chmod 777 /opt
 
 COPY --from=builder /wal-g /usr/local/bin/wal-g
 

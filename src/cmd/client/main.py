@@ -2,6 +2,7 @@ import logging
 import time
 
 from internal.wrappers.random_wal_generator import RandomWalGenerator
+from utils.generate_walg_config import generate_walg_config
 from utils.postgres.start import start_postgres
 
 logging.basicConfig(
@@ -12,8 +13,8 @@ logging.basicConfig(
 
 
 def main():
-    # TODO walg config generation
-    # TODO postgres configuration for wal pushing
+    generate_walg_config()
+    start_postgres()
     generator = RandomWalGenerator()
     generator.prepare(None)
 
