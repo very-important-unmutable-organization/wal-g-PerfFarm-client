@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from internal.base.base_benchmark import BaseBenchmark
@@ -17,9 +18,11 @@ class BenchmarkRunner:
         self.wrappers = wrappers
 
     def run(self) -> List[Result]:
-        self.prepare()
-        self.run_bench()
-        self.cleanup()
+        logging.info(f'running {self.name} benchmark')
+
+        self._prepare()
+        self._run_bench()
+        self._cleanup()
 
         runner_results = []
         for bench_result in self.bench.results():
@@ -28,17 +31,21 @@ class BenchmarkRunner:
                 Result(runner_result_name, bench_result.metric_value)
             )
 
+        logging.info(f'run of {self.name} benchmark ended')
         return runner_results
 
-    def prepare(self) -> None:
+    def _prepare(self) -> None:
         for wrapper in self.wrappers:
             wrapper.prepare(self.bench)
 
-    def cleanup(self) -> None:
+    def _cleanup(self) -> None:
         for wrapper in reversed(self.wrappers):
             wrapper.cleanup(self.bench)
 
-    def run_bench(self) -> None:
+    def _run_bench(self) -> None:
         self.bench.prepare()
         self.bench.run()
         self.bench.cleanup()
+
+    def __str__(self):
+        return f'{self.name}'

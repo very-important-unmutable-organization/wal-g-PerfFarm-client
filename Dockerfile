@@ -48,4 +48,4 @@ COPY src bench.yaml ./
 ENV PYTHONUNBUFFERED=1
 ENV PGDATA=/var/lib/postgresql/data
 
-ENTRYPOINT ["python3", "-m", "cmd.client.main"]
+ENTRYPOINT ["python3", "-m", "cmd.client.main", "--log=DEBUG"]

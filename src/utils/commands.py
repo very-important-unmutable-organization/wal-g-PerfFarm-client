@@ -4,17 +4,17 @@ from typing import Tuple, Optional
 
 
 def run_command(command) -> Tuple[int, str, str]:
-    return run_command_(command)
+    return _run_command(command)
 
 
 def run_command_out_to_shell(command) -> int:
-    code, _, _ = run_command_(command, out_to_shell=True)
+    code, _, _ = _run_command(command, out_to_shell=True)
 
     return code
 
 
-def run_command_(command, out_to_shell=False) -> Tuple[int, Optional[str], Optional[str]]:
-    logging.info(f'running {command}')
+def _run_command(command, out_to_shell=False) -> Tuple[int, Optional[str], Optional[str]]:
+    logging.debug(f'running {command}')
 
     completed_process = subprocess.run(
         [command],

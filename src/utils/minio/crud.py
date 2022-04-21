@@ -16,7 +16,7 @@ def new_client():
 
 
 def minio_delete_object(bucket: str, bucket_path: str) -> bool:
-    logging.info(f'deleting {bucket}/{bucket_path} from minio')
+    logging.debug(f'deleting {bucket}/{bucket_path} from minio')
 
     client = new_client()
     if minio_object_exist(bucket, bucket_path):
@@ -36,7 +36,7 @@ def minio_object_exist(bucket: str, bucket_path: str) -> bool:
 
 
 def upload_to_bucket(os_path: str, bucket: str, bucket_path: str, bucket_create: bool = False) -> None:
-    logging.info(f'trying to upload {os_path} to minio bucket {bucket} with path {bucket_path}')
+    logging.debug(f'trying to upload {os_path} to minio bucket {bucket} with path {bucket_path}')
     client = new_client()
 
     found = client.bucket_exists(bucket)
@@ -53,4 +53,4 @@ def upload_to_bucket(os_path: str, bucket: str, bucket_path: str, bucket_create:
         file_path=os_path,
     )
 
-    logging.info(f'upload {os_path} to minio succeed!')
+    logging.debug(f'upload {os_path} to minio succeed!')

@@ -2,32 +2,32 @@ wrappers:
   push_random_wal:
     class: RandomWalGenerator
 
-  push_real_pg_wal:
-    class: PGWalPusher
-
-  gen_pg_data_large:
-    class: PGDataGenerator
-    kwargs:
-      tables: 3
-      table_size: 1000
-
-  gen_pg_data_small:
-    class: PGDataGenerator
-    kwargs:
-      tables: 1
-      table_size: 10
+#  push_real_pg_wal:
+#    class: PGWalPusher
+#
+#  gen_pg_data_large:
+#    class: PGDataGenerator
+#    kwargs:
+#      tables: 3
+#      table_size: 1000
+#
+#  gen_pg_data_small:
+#    class: PGDataGenerator
+#    kwargs:
+#      tables: 1
+#      table_size: 10
 
 benchmarks:
-  - bench_name: RandomWalFetch100Times
+  - bench_name: random_wal_fetch_100_times
     class: RunWalFetchNTimes
     kwargs:
       times: 100
     wrappers:
       - wrapper: push_random_wal
 
-  - bench_name: RealWalFetch100Times
-    class: RunWalFetchNTimes
-    kwargs:
-      times: 100
-    wrappers:
-      - wrapper: push_real_pg_wal
+#  - bench_name: real_wal_fetch_100_times
+#    class: RunWalFetchNTimes
+#    kwargs:
+#      times: 100
+#    wrappers:
+#      - wrapper: push_real_pg_wal
