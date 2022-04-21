@@ -11,8 +11,15 @@ class BenchmarkError(WalgPerformanceFarmBase):
 
 class BenchmarkNotRanResults(BenchmarkError):
     def __init__(self):
-        super().__init__('benchmark results method called before benchmark run')
+        pass
+
+    def __str__(self):
+        return 'benchmark results method called before benchmark run'
 
 
 class BenchmarkNotConfigured(BenchmarkError):
-    pass
+    def __init__(self, reason: str):
+        self.reason = reason
+
+    def __str__(self):
+        return self.reason
