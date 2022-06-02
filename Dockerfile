@@ -34,6 +34,8 @@ RUN apt-get update && \
     chmod 777 /opt
 
 COPY --from=builder /wal-g /usr/local/bin/wal-g
+COPY --from=builder /tmp/commit_time /commit_time
+COPY --from=builder /tmp/commit_sha /commit_sha
 
 USER postgres
 
@@ -45,7 +47,15 @@ RUN pip3 install -r requirements.txt
 
 COPY src bench.yaml ./
 
+COPY static static
+
+USER root
+
+RUN chmod -R 777 ./static
+
+USER postgres
+
 ENV PYTHONUNBUFFERED=1
 ENV PGDATA=/var/lib/postgresql/data
 
-ENTRYPOINT ["python3", "-m", "cmd.client.main", "--log=DEBUG"]
+ENTRYPOINT ["python3", "-m", "cmd.client.main"]

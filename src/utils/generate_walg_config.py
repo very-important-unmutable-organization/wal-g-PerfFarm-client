@@ -11,6 +11,8 @@ def generate_walg_config():
         "AWS_SECRET_ACCESS_KEY": MINIO_SECRET_KEY,
         "AWS_ENDPOINT": f"http://{MINIO_ENDPOINT}",
         "AWS_S3_FORCE_PATH_STYLE": True,
+        "WALG_DOWNLOAD_CONCURRENCY": 1,
+        "WALG_UPLOAD_CONCURRENCY": 1,
         "PGHOST": "localhost",
         "PGPORT": 5432,
         "PGUSER": "postgres",

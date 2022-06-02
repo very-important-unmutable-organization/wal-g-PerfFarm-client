@@ -1,4 +1,6 @@
+import datetime
 import logging
+import os
 import time
 from typing import Dict, List
 
@@ -7,6 +9,8 @@ import yaml
 from internal.base.base_wrapper import BaseWrapper
 from internal.base.benchmark_runner import BenchmarkRunner
 from internal.benchmarks.run_wal_fetch_n_times import RunWalFetchNTimes
+from internal.sender.sender import Sender
+from internal.wrappers.pg_wal_pusher import PGWalPusher
 from internal.wrappers.random_wal_generator import RandomWalGenerator
 from utils.const import CONFIGURATION_WRAPPERS_KEY, CONFIGURATION_CLASS_KEY, CONFIGURATION_KWARGS_KEY, \
     CONFIGURATION_BENCHMARKS_KEY, CONFIGURATION_WRAPPER_KEY, CONFIGURATION_BENCH_NAME_KEY
@@ -14,12 +18,13 @@ from utils.generate_walg_config import generate_walg_config
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
-    level=logging.DEBUG,
+    level=logging.INFO,
     datefmt='%Y/%m/%d %H:%M:%S',
 )
 
 WRAPPER_CLASSES = {
     'RandomWalGenerator': RandomWalGenerator,
+    'PGWalPusher': PGWalPusher,
 }
 
 BENCHMARK_CLASSES = {
@@ -76,6 +81,19 @@ def read_benchmarks(configuration, wrappers_lookup) -> List[BenchmarkRunner]:
     return benchmark_runners
 
 
+def read_commit_time() -> datetime.datetime:
+    commit_timestamp = ''
+    with open('/commit_time', 'r') as f:
+        commit_timestamp = f.read()
+
+    return datetime.datetime.fromtimestamp(float(commit_timestamp))
+
+
+def read_commit_sha() -> str:
+    with open('/commit_sha', 'r') as f:
+        return f.read()
+
+
 def main():
     generate_walg_config()
     configuration = {}
@@ -84,6 +102,7 @@ def main():
 
     wrappers = read_wrappers(configuration)
     benchmarks = read_benchmarks(configuration, wrappers)
+    server_addr = configuration['server']
 
     results = []
     logging.info('running of benchmarks started')
@@ -93,9 +112,15 @@ def main():
 
     logging.info('all benchmarks has been run!')
 
-    logging.info('\n'.join(str(res) for res in results))
+    logging.info('\n' + '\n'.join(str(res) for res in results))
+
+    sender = Sender(server_addr)
+    sender.send_batch(
+        batch=results,
+        commit_sha=read_commit_sha(),
+        commit_time=read_commit_time()
+    )
 
 
 if __name__ == '__main__':
     main()
-    time.sleep(999999)

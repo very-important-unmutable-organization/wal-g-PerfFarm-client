@@ -14,6 +14,12 @@ logging.basicConfig(
 )
 
 
+def add_metainfo_files(commit):
+    run_command(f'git show -s --format=%ct {commit} > /tmp/commit_time')
+    with open('/tmp/commit_sha', 'w') as f:
+        f.write(commit)
+
+
 def build_walg(commit):
     with TemporaryDirectory() as tempdir:
         logging.info(f'clonning walg repo from {WALG_REPO_URL}')
@@ -37,6 +43,9 @@ def build_walg(commit):
         run_command_out_to_shell('make pg_install')
 
         logging.info('build of walg finished!')
+
+        add_metainfo_files(commit)
+        logging.info('added commit time in /tmp/commit_time')
 
 
 def parse_args():
