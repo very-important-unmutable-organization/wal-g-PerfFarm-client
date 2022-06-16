@@ -18,9 +18,10 @@ COPY src/cmd/build_walg /opt/cmd/build_walg
 COPY src/utils/commands.py /opt/utils/commands.py
 
 ARG WALG_COMMIT
+ARG WALG_REPO
 ENV PYTHONUNBUFFERED=1
 
-RUN python3 -m cmd.build_walg.main --commit $WALG_COMMIT
+RUN python3 -m cmd.build_walg.main --commit $WALG_COMMIT --repo $WALG_REPO
 
 ###################################################
 
@@ -34,8 +35,7 @@ RUN apt-get update && \
     chmod 777 /opt
 
 COPY --from=builder /wal-g /usr/local/bin/wal-g
-COPY --from=builder /tmp/commit_time /commit_time
-COPY --from=builder /tmp/commit_sha /commit_sha
+COPY --from=builder /tmp/build-info.json /build-info.json
 
 USER postgres
 

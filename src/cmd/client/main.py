@@ -1,7 +1,7 @@
 import datetime
+import json
 import logging
 import os
-import time
 from typing import Dict, List
 
 import yaml
@@ -81,17 +81,20 @@ def read_benchmarks(configuration, wrappers_lookup) -> List[BenchmarkRunner]:
     return benchmark_runners
 
 
-def read_commit_time() -> datetime.datetime:
-    commit_timestamp = ''
-    with open('/commit_time', 'r') as f:
-        commit_timestamp = f.read()
+def read_build_info() -> dict:
+    with open('/build-info.json', 'r') as f:
+        data = json.load(f)
 
-    return datetime.datetime.fromtimestamp(float(commit_timestamp))
+    data['commit_time'] = datetime.datetime.fromtimestamp(float(data['commit_time']))
+
+    return data
 
 
-def read_commit_sha() -> str:
-    with open('/commit_sha', 'r') as f:
-        return f.read()
+def read_server_creds() -> (str, str):
+    login = os.getenv("CLIENT_SERVER_LOGIN")
+    password = os.getenv("CLIENT_SERVER_PASSWORD")
+
+    return login, password
 
 
 def main():
@@ -114,11 +117,15 @@ def main():
 
     logging.info('\n' + '\n'.join(str(res) for res in results))
 
-    sender = Sender(server_addr)
+    build_info = read_build_info()
+    login, password = read_server_creds()
+
+    sender = Sender(server_addr, login, password)
     sender.send_batch(
         batch=results,
-        commit_sha=read_commit_sha(),
-        commit_time=read_commit_time()
+        commit_sha=build_info['commit_sha'],
+        commit_time=build_info['commit_time'],
+        repo=build_info['repo'],
     )
 
 

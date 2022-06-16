@@ -1,11 +1,10 @@
 import argparse
+import json
 import logging
 import os
 from tempfile import TemporaryDirectory
 
 from utils.commands import run_command, run_command_out_to_shell
-
-WALG_REPO_URL = 'https://github.com/wal-g/wal-g'
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
@@ -14,16 +13,28 @@ logging.basicConfig(
 )
 
 
-def add_metainfo_files(commit):
-    run_command(f'git show -s --format=%ct {commit} > /tmp/commit_time')
-    with open('/tmp/commit_sha', 'w') as f:
-        f.write(commit)
+def add_metainfo_files(repo, commit_sha):
+    _, commit_time, _ = run_command(f'git show -s --format=%ct {commit_sha}')
+
+    data = {
+        'commit_time': commit_time,
+        'commit_sha': commit_sha,
+        'repo': repo,
+    }
+
+    with open('/tmp/build-info.json', 'w') as f:
+        json.dump(data, f)
+
+    print(data)
 
 
-def build_walg(commit):
+def build_walg(repo, commit):
     with TemporaryDirectory() as tempdir:
-        logging.info(f'clonning walg repo from {WALG_REPO_URL}')
-        run_command(f'git clone {WALG_REPO_URL} {tempdir}')
+        logging.info(f'clonning walg repo from {repo}')
+        ret_code, out, err = run_command(f'git clone {repo} {tempdir}')
+        if ret_code != 0:
+            raise RuntimeError(f"walg repo cannot be cloned. out: {out}; err: {err}")
+
         logging.info('walg repo clonned')
 
         try:
@@ -44,7 +55,7 @@ def build_walg(commit):
 
         logging.info('build of walg finished!')
 
-        add_metainfo_files(commit)
+        add_metainfo_files(repo, commit)
         logging.info('added commit time in /tmp/commit_time')
 
 
@@ -53,14 +64,26 @@ def parse_args():
         prog='build-walg',
         description='program to build wal-g binary from certain commit'
     )
-    parser.add_argument('--commit', required=True, type=str, help='commit to build wal-g from')
+    parser.add_argument(
+        '--commit',
+        required=True,
+        type=str,
+        help='commit to build wal-g from'
+    )
+    parser.add_argument(
+        '--repo',
+        required=False,
+        type=str,
+        default='https://github.com/wal-g/wal-g',
+        help='link to repo with walg (for testing forks). by default points to walg github repository.'
+    )
 
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    build_walg(args.commit)
+    build_walg(args.repo, args.commit)
 
 
 if __name__ == '__main__':
