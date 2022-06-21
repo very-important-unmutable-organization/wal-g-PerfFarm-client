@@ -9,6 +9,7 @@ import yaml
 from internal.base.base_wrapper import BaseWrapper
 from internal.base.benchmark_runner import BenchmarkRunner
 from internal.benchmarks.run_wal_fetch_n_times import RunWalFetchNTimes
+from internal.benchmarks.wal_fetch_max_mem import RunWalFetchNTimesMaxMem
 from internal.sender.sender import Sender
 from internal.wrappers.pg_wal_pusher import PGWalPusher
 from internal.wrappers.random_wal_generator import RandomWalGenerator
@@ -18,7 +19,7 @@ from utils.generate_walg_config import generate_walg_config
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
-    level=logging.INFO,
+    level=logging.DEBUG,
     datefmt='%Y/%m/%d %H:%M:%S',
 )
 
@@ -29,6 +30,7 @@ WRAPPER_CLASSES = {
 
 BENCHMARK_CLASSES = {
     'RunWalFetchNTimes': RunWalFetchNTimes,
+    'RunWalFetchNTimesMaxMem': RunWalFetchNTimesMaxMem,
 }
 
 
