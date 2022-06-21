@@ -15,6 +15,7 @@ from internal.wrappers.random_wal_generator import RandomWalGenerator
 from utils.const import CONFIGURATION_WRAPPERS_KEY, CONFIGURATION_CLASS_KEY, CONFIGURATION_KWARGS_KEY, \
     CONFIGURATION_BENCHMARKS_KEY, CONFIGURATION_WRAPPER_KEY, CONFIGURATION_BENCH_NAME_KEY
 from utils.generate_walg_config import generate_walg_config
+from utils.minio.setup import setup_minio
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
@@ -99,6 +100,7 @@ def read_server_creds() -> (str, str):
 
 def main():
     generate_walg_config()
+    setup_minio()
     configuration = {}
     with open('/opt/bench.yaml', 'r') as f:
         configuration = yaml.safe_load(f)
