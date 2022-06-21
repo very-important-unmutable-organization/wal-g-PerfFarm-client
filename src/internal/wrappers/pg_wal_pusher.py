@@ -16,8 +16,9 @@ class PGWalPusher(BaseWrapper):
     def prepare(self, bench: BaseBenchmark):
         logging.debug('pushing prepared wal from static dir')
 
-        ret_code, _, _ = run_walg_command(f'wal-push ./static/real_wal/{self.wal_name}')
+        ret_code, _, err = run_walg_command(f'wal-push ./static/real_wal/{self.wal_name}')
         if ret_code != 0:
+            logging.error(err)
             raise RuntimeError("wal-push command returned non zero code")
 
         bench.pushed_wal_name = self.wal_name
