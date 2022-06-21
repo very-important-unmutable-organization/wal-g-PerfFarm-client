@@ -18,7 +18,7 @@ from utils.generate_walg_config import generate_walg_config
 
 logging.basicConfig(
     format='[%(levelname)s] [%(asctime)s]  %(message)s',
-    level=logging.INFO,
+    level=logging.DEBUG,
     datefmt='%Y/%m/%d %H:%M:%S',
 )
 

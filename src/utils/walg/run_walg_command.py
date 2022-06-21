@@ -12,5 +12,9 @@ def run_walg_command(command: str) -> Tuple[int, str, str]:
     return run_command(_walg_generate_command(command))
 
 
+def time_walg_command(command: str, time_format: str) -> Tuple[int, str, str]:
+    return run_command(f'/usr/bin/time -f "{time_format}" {_walg_generate_command(command)}')
+
+
 def run_walg_command_out_to_shell(command) -> int:
     return run_command_out_to_shell(_walg_generate_command(command))
