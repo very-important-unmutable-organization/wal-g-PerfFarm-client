@@ -30,6 +30,7 @@ FROM python:3.9.12-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
     libbrotli-dev \
+    time \
     postgresql \
     postgresql-contrib && \
     chmod 777 /opt
