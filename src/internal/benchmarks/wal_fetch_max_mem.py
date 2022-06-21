@@ -37,8 +37,7 @@ class RunWalFetchNTimesMaxMem(BaseBenchmark):
                 logging.error(f'stdout: {out}; stderr: {err}')
                 raise BenchmarkError('nonzero return code in walg run')
 
-            mem = int(out.split('\n')[-1])
-            total += mem
+            total += int(err)
             times += 1
 
         self._results.append(Result(f'max_mem_kb', total / times))
