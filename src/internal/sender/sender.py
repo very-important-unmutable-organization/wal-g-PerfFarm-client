@@ -57,9 +57,9 @@ class Sender:
 
         with requests.Session() as session:
             self._prepare_session(session)
-
             self._login(session)
 
+            logging.debug(f'repo: {repo}')
             resp = session.post(
                 url,
                 timeout=3,

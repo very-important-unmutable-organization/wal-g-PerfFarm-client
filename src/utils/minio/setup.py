@@ -4,4 +4,5 @@ from utils.minio.crud import new_client
 
 def setup_minio():
     client = new_client()
-    client.make_bucket(MINIO_POSTGRES_BACKUP_BUCKET)
+    if not client.bucket_exists(MINIO_POSTGRES_BACKUP_BUCKET):
+        client.make_bucket(MINIO_POSTGRES_BACKUP_BUCKET)
