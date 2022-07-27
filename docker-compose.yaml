@@ -5,9 +5,8 @@ services:
     build:
       context: .
     container_name: farm-client
-    environment:
-      CLIENT_SERVER_LOGIN: client
-      CLIENT_SERVER_PASSWORD: penis_Vagina_piZda
+    env_file:
+      - .env
   minio:
     image: minio/minio:RELEASE.2022-03-17T06-34-49Z
     container_name: minio
